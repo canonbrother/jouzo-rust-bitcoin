@@ -9,15 +9,17 @@ use core::fmt::{self, Write};
 use core::ops;
 use core::str::FromStr;
 
+use bitcoin_io::io::Read;
 use hashes::{hash160, Hash};
 use hex::FromHex;
 use internals::write_err;
 
+use crate::consensus::{Decodable, Encodable};
 use crate::crypto::ecdsa;
 use crate::network::Network;
 use crate::prelude::*;
 use crate::taproot::{TapNodeHash, TapTweakHash};
-use crate::{base58, io};
+use crate::{base58, impl_consensus_encoding, io};
 
 #[rustfmt::skip]                // Keep public re-exports separate.
 pub use secp256k1::{self, constants, Keypair, Parity, Secp256k1, Verification, XOnlyPublicKey};
@@ -81,10 +83,8 @@ impl PublicKey {
     /// use of a `BufReader` is recommended.
     pub fn read_from<R: io::Read + ?Sized>(reader: &mut R) -> Result<Self, io::Error> {
         let mut bytes = [0; 65];
-
         reader.read_exact(&mut bytes[0..1])?;
         let bytes = if bytes[0] < 4 { &mut bytes[..33] } else { &mut bytes[..65] };
-
         reader.read_exact(&mut bytes[1..])?;
         Self::from_slice(bytes).map_err(|e| {
             // Need a static string for no-std io
@@ -252,6 +252,7 @@ hashes::hash_newtype! {
     /// SegWit version of a public key hash.
     pub struct WPubkeyHash(hash160::Hash);
 }
+
 crate::hash_types::impl_asref_push_bytes!(PubkeyHash, WPubkeyHash);
 
 impl From<PublicKey> for PubkeyHash {
@@ -260,6 +261,23 @@ impl From<PublicKey> for PubkeyHash {
 
 impl From<&PublicKey> for PubkeyHash {
     fn from(key: &PublicKey) -> PubkeyHash { key.pubkey_hash() }
+}
+
+impl Encodable for PubkeyHash {
+    fn consensus_encode<W: io::Write + ?Sized>(&self, writer: &mut W) -> Result<usize, io::Error> {
+        writer.write(&self.to_byte_array())?;
+        Ok(20)
+    }
+}
+
+impl Decodable for PubkeyHash {
+    fn consensus_decode<R: io::Read + ?Sized>(
+        reader: &mut R,
+    ) -> Result<Self, crate::consensus::encode::Error> {
+        let mut buf = [0u8; 20];
+        reader.read_exact(&mut buf).map_err(crate::consensus::encode::Error::Io)?;
+        Ok(Self::from_byte_array(buf))
+    }
 }
 
 /// A Bitcoin ECDSA private key
