@@ -5,14 +5,15 @@
 //! Macros meant to be used inside the Rust Bitcoin library.
 //!
 
+#[macro_export]
 macro_rules! impl_consensus_encoding {
     ($thing:ident, $($field:ident),+) => (
         impl $crate::consensus::Encodable for $thing {
             #[inline]
-            fn consensus_encode<R: $crate::io::Write + ?Sized>(
+            fn consensus_encode<R: io::Write + ?Sized>(
                 &self,
                 r: &mut R,
-            ) -> Result<usize, $crate::io::Error> {
+            ) -> Result<usize, io::Error> {
                 let mut len = 0;
                 $(len += self.$field.consensus_encode(r)?;)+
                 Ok(len)
@@ -22,7 +23,7 @@ macro_rules! impl_consensus_encoding {
         impl $crate::consensus::Decodable for $thing {
 
             #[inline]
-            fn consensus_decode_from_finite_reader<R: $crate::io::Read + ?Sized>(
+            fn consensus_decode_from_finite_reader<R: io::Read + ?Sized>(
                 r: &mut R,
             ) -> Result<$thing, $crate::consensus::encode::Error> {
                 Ok($thing {
@@ -31,7 +32,7 @@ macro_rules! impl_consensus_encoding {
             }
 
             #[inline]
-            fn consensus_decode<R: $crate::io::Read + ?Sized>(
+            fn consensus_decode<R: io::Read + ?Sized>(
                 r: &mut R,
             ) -> Result<$thing, $crate::consensus::encode::Error> {
                 let mut r = r.take($crate::consensus::encode::MAX_VEC_SIZE as u64);

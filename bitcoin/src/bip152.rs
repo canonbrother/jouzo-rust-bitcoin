@@ -232,7 +232,7 @@ impl HeaderAndShortIds {
         }
 
         Ok(HeaderAndShortIds {
-            header: block.header,
+            header: block.header.clone(),
             nonce,
             // Provide coinbase prefilled.
             prefilled_txs: prefilled,

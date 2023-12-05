@@ -7,6 +7,7 @@
 //! single transaction.
 //!
 
+use alloc::vec;
 use core::default::Default;
 
 use hashes::{sha256d, Hash};
@@ -79,7 +80,11 @@ fn bitcoin_genesis_tx() -> Transaction {
     let script_bytes = hex!("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f");
     let out_script =
         script::Builder::new().push_slice(script_bytes).push_opcode(OP_CHECKSIG).into_script();
-    ret.output.push(TxOut { value: Amount::from_sat(50 * 100_000_000), script_pubkey: out_script });
+    ret.output.push(TxOut {
+        value: Amount::from_sat(50 * 100_000_000),
+        script_pubkey: out_script,
+        unused_token_id: 0,
+    });
 
     // end
     ret
@@ -98,7 +103,10 @@ pub fn genesis_block(network: Network) -> Block {
                 merkle_root,
                 time: 1231006505,
                 bits: CompactTarget::from_consensus(0x1d00ffff),
-                nonce: 2083236893,
+                stake_modifier: [0u8; 32],
+                deprecated_height: 0,
+                minted_blocks: 0,
+                sig: vec![],
             },
             txdata,
         },
@@ -109,7 +117,10 @@ pub fn genesis_block(network: Network) -> Block {
                 merkle_root,
                 time: 1296688602,
                 bits: CompactTarget::from_consensus(0x1d00ffff),
-                nonce: 414098458,
+                stake_modifier: [0u8; 32],
+                deprecated_height: 0,
+                minted_blocks: 0,
+                sig: vec![],
             },
             txdata,
         },
@@ -120,7 +131,10 @@ pub fn genesis_block(network: Network) -> Block {
                 merkle_root,
                 time: 1598918400,
                 bits: CompactTarget::from_consensus(0x1e0377ae),
-                nonce: 52613770,
+                stake_modifier: [0u8; 32],
+                deprecated_height: 0,
+                minted_blocks: 0,
+                sig: vec![],
             },
             txdata,
         },
@@ -131,7 +145,10 @@ pub fn genesis_block(network: Network) -> Block {
                 merkle_root,
                 time: 1296688602,
                 bits: CompactTarget::from_consensus(0x207fffff),
-                nonce: 2,
+                stake_modifier: [0u8; 32],
+                deprecated_height: 0,
+                minted_blocks: 0,
+                sig: vec![],
             },
             txdata,
         },

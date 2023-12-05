@@ -7,6 +7,7 @@
 
 use crate::hash_types::{BlockHash, FilterHash, FilterHeader};
 use crate::internal_macros::impl_consensus_encoding;
+use crate::io;
 
 /// getcfilters message
 #[derive(PartialEq, Eq, Clone, Debug)]

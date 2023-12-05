@@ -38,7 +38,7 @@ pub use crate::{
 /// ### Bitcoin Core References
 ///
 /// * [CBlockHeader definition](https://github.com/bitcoin/bitcoin/blob/345457b542b6a980ccfbc868af0970a6f91d1b82/src/primitives/block.h#L20)
-#[derive(Copy, PartialEq, Eq, Clone, PartialOrd, Ord, Hash)]
+#[derive(PartialEq, Eq, Clone, PartialOrd, Ord, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "serde", serde(crate = "actual_serde"))]
 pub struct Header {
@@ -52,11 +52,24 @@ pub struct Header {
     pub time: u32,
     /// The target value below which the blockhash must lie.
     pub bits: CompactTarget,
-    /// The nonce, selected to obtain a low enough blockhash.
-    pub nonce: u32,
+    pub stake_modifier: [u8; 32],
+    pub deprecated_height: u64,
+    pub minted_blocks: u64,
+    pub sig: Vec<u8>,
 }
 
-impl_consensus_encoding!(Header, version, prev_blockhash, merkle_root, time, bits, nonce);
+impl_consensus_encoding!(
+    Header,
+    version,
+    prev_blockhash,
+    merkle_root,
+    time,
+    bits,
+    stake_modifier,
+    deprecated_height,
+    minted_blocks,
+    sig
+);
 
 impl Header {
     /// The number of bytes that the block header contributes to the size of a block.
@@ -109,7 +122,11 @@ impl fmt::Debug for Header {
             .field("merkle_root", &self.merkle_root)
             .field("time", &self.time)
             .field("bits", &self.bits)
-            .field("nonce", &self.nonce)
+            .field("bits", &self.bits)
+            .field("stake_modifier", &self.stake_modifier)
+            .field("deprecated_height", &self.deprecated_height)
+            .field("minted_blocks", &self.minted_blocks)
+            .field("sig", &self.sig)
             .finish()
     }
 }

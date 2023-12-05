@@ -504,12 +504,17 @@ pub struct TxOut {
     pub value: Amount,
     /// The script which must be satisfied for the output to be spent.
     pub script_pubkey: ScriptBuf,
+    /// Unused. Legacy token_id
+    pub unused_token_id: u8,
 }
 
 impl TxOut {
     /// This is used as a "null txout" in consensus signing code.
-    pub const NULL: Self =
-        TxOut { value: Amount::from_sat(0xffffffffffffffff), script_pubkey: ScriptBuf::new() };
+    pub const NULL: Self = TxOut {
+        value: Amount::from_sat(0xffffffffffffffff),
+        script_pubkey: ScriptBuf::new(),
+        unused_token_id: 0,
+    };
 
     /// The weight of this output.
     ///
@@ -548,6 +553,7 @@ impl TxOut {
         TxOut {
             value: Amount::from_sat(dust_amount + 1), // minimal non-dust amount is one higher than dust amount
             script_pubkey,
+            unused_token_id: 0,
         }
     }
 }
@@ -1006,7 +1012,7 @@ impl Decodable for Version {
     }
 }
 
-impl_consensus_encoding!(TxOut, value, script_pubkey);
+impl_consensus_encoding!(TxOut, value, script_pubkey, unused_token_id);
 
 impl Encodable for OutPoint {
     fn consensus_encode<W: io::Write + ?Sized>(&self, w: &mut W) -> Result<usize, io::Error> {
