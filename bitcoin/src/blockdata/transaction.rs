@@ -505,7 +505,7 @@ pub struct TxOut {
     /// The script which must be satisfied for the output to be spent.
     pub script_pubkey: ScriptBuf,
     /// Unused. Legacy token_id
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
     pub unused_token_id: Option<u8>,
 }
 
