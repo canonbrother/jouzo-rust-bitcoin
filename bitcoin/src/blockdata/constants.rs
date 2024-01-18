@@ -83,7 +83,7 @@ fn bitcoin_genesis_tx() -> Transaction {
     ret.output.push(TxOut {
         value: Amount::from_sat(50 * 100_000_000),
         script_pubkey: out_script,
-        unused_token_id: 0,
+        unused_token_id: Some(0),
     });
 
     // end

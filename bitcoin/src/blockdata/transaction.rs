@@ -505,7 +505,7 @@ pub struct TxOut {
     /// The script which must be satisfied for the output to be spent.
     pub script_pubkey: ScriptBuf,
     /// Unused. Legacy token_id
-    pub unused_token_id: u8,
+    pub unused_token_id: Option<u8>,
 }
 
 impl TxOut {
@@ -513,7 +513,7 @@ impl TxOut {
     pub const NULL: Self = TxOut {
         value: Amount::from_sat(0xffffffffffffffff),
         script_pubkey: ScriptBuf::new(),
-        unused_token_id: 0,
+        unused_token_id: Some(0),
     };
 
     /// The weight of this output.
@@ -553,7 +553,7 @@ impl TxOut {
         TxOut {
             value: Amount::from_sat(dust_amount + 1), // minimal non-dust amount is one higher than dust amount
             script_pubkey,
-            unused_token_id: 0,
+            unused_token_id: Some(0),
         }
     }
 }
@@ -1012,7 +1012,26 @@ impl Decodable for Version {
     }
 }
 
-impl_consensus_encoding!(TxOut, value, script_pubkey, unused_token_id);
+// impl_consensus_encoding!(TxOut, value, script_pubkey, unused_token_id);
+impl Encodable for TxOut {
+    fn consensus_encode<W: io::Write + ?Sized>(&self, w: &mut W) -> Result<usize, io::Error> {
+        let mut len = self.value.consensus_encode(w)?;
+        len += self.script_pubkey.consensus_encode(w)?;
+        if let Some(unused_token_id) = self.unused_token_id {
+            len += unused_token_id.consensus_encode(w)?;
+        };
+        Ok(len)
+    }
+}
+impl Decodable for TxOut {
+    fn consensus_decode<R: io::Read + ?Sized>(r: &mut R) -> Result<Self, encode::Error> {
+        Ok(TxOut {
+            value: Decodable::consensus_decode(r)?,
+            script_pubkey: Decodable::consensus_decode(r)?,
+            unused_token_id: Some(Decodable::consensus_decode(r)?),
+        })
+    }
+}
 
 impl Encodable for OutPoint {
     fn consensus_encode<W: io::Write + ?Sized>(&self, w: &mut W) -> Result<usize, io::Error> {
