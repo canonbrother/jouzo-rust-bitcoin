@@ -122,7 +122,6 @@ impl fmt::Debug for Header {
             .field("merkle_root", &self.merkle_root)
             .field("time", &self.time)
             .field("bits", &self.bits)
-            .field("bits", &self.bits)
             .field("stake_modifier", &self.stake_modifier)
             .field("deprecated_height", &self.deprecated_height)
             .field("minted_blocks", &self.minted_blocks)
