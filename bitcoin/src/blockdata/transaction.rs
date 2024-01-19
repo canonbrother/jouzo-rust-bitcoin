@@ -1029,8 +1029,7 @@ impl Decodable for TxOut {
         Ok(TxOut {
             value: Decodable::consensus_decode(r)?,
             script_pubkey: Decodable::consensus_decode(r)?,
-            unused_token_id: None,
-            // unused_token_id: Some(Decodable::consensus_decode(r)?),
+            unused_token_id: Some(Decodable::consensus_decode(r)?),
         })
     }
 }
