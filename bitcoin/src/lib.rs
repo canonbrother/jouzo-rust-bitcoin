@@ -113,6 +113,8 @@ pub mod sign_message;
 pub mod string;
 pub mod taproot;
 
+pub mod common;
+
 pub use bitcoin_io::io;
 
 #[rustfmt::skip]                // Keep public re-exports separate.

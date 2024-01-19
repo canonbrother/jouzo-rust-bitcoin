@@ -22,6 +22,7 @@ use crate::blockdata::locktime::absolute::{self, Height, Time};
 use crate::blockdata::locktime::relative;
 use crate::blockdata::script::{Script, ScriptBuf};
 use crate::blockdata::witness::Witness;
+use crate::common::Maybe;
 use crate::consensus::{encode, Decodable, Encodable};
 use crate::hash_types::{Txid, Wtxid};
 use crate::internal_macros::impl_consensus_encoding;
@@ -1026,11 +1027,23 @@ impl Encodable for TxOut {
 }
 impl Decodable for TxOut {
     fn consensus_decode<R: io::Read + ?Sized>(r: &mut R) -> Result<Self, encode::Error> {
+        let value: Amount =  Decodable::consensus_decode(r)?;
+        let script_pubkey: ScriptBuf =  Decodable::consensus_decode(r)?;
+        let token_id = if let Maybe(Some(token_id)) = <Maybe<u8>>::consensus_decode(r)? {
+            Some(token_id)
+        } else {
+            None
+        };
         Ok(TxOut {
-            value: Decodable::consensus_decode(r)?,
-            script_pubkey: Decodable::consensus_decode(r)?,
-            unused_token_id: Some(Decodable::consensus_decode(r)?),
+            value,
+            script_pubkey,
+            unused_token_id: token_id,
         })
+        // Ok(TxOut {
+        //     value: Decodable::consensus_decode(r)?,
+        //     script_pubkey: Decodable::consensus_decode(r)?,
+        //     unused_token_id: Some(Decodable::consensus_decode(r)?),
+        // })
     }
 }
 
