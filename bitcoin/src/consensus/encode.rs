@@ -33,6 +33,7 @@ use crate::p2p::{
 };
 use crate::prelude::*;
 use crate::taproot::TapLeafHash;
+use crate::transaction::TxOutV2;
 
 /// Encoding error.
 #[derive(Debug)]
@@ -628,6 +629,7 @@ impl_vec!(FilterHeader);
 impl_vec!(TxMerkleNode);
 impl_vec!(Transaction);
 impl_vec!(TxOut);
+impl_vec!(TxOutV2);
 impl_vec!(TxIn);
 impl_vec!(Vec<u8>);
 impl_vec!(u64);

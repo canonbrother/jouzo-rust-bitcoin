@@ -564,6 +564,25 @@ fn size_from_script_pubkey(script_pubkey: &Script) -> usize {
     Amount::SIZE + VarInt::from(len).size() + len
 }
 
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", serde(crate = "actual_serde"))]
+pub struct TxOutV2 {
+    /// The value of the output, in satoshis.
+    pub value: Amount,
+    /// The script which must be satisfied for the output to be spent.
+    pub script_pubkey: ScriptBuf,
+}
+
+impl From<TxOut> for TxOutV2 {
+    fn from(tx: TxOut) -> Self { TxOutV2 { value: tx.value, script_pubkey: tx.script_pubkey } }
+}
+
+impl From<TxOutV2> for TxOut {
+    fn from(tx: TxOutV2) -> Self {
+        TxOut { value: tx.value, script_pubkey: tx.script_pubkey, unused_token_id: 0 }
+    }
+}
 /// Bitcoin transaction.
 ///
 /// An authenticated movement of coins.
@@ -993,6 +1012,9 @@ impl Version {
     /// The second Bitcoin transaction version (post-BIP-68).
     pub const TWO: Self = Self(2);
 
+    /// The Fourth Defichain transaction version.
+    pub const FOUR: Self = Self(4);
+
     /// Creates a non-standard transaction version.
     pub fn non_standard(version: i32) -> Version { Self(version) }
 
@@ -1013,6 +1035,7 @@ impl Decodable for Version {
 }
 
 impl_consensus_encoding!(TxOut, value, script_pubkey, unused_token_id);
+impl_consensus_encoding!(TxOutV2, value, script_pubkey);
 
 impl Encodable for OutPoint {
     fn consensus_encode<W: io::Write + ?Sized>(&self, w: &mut W) -> Result<usize, io::Error> {
@@ -1078,7 +1101,17 @@ impl Encodable for Transaction {
             len += SEGWIT_MARKER.consensus_encode(w)?;
             len += SEGWIT_FLAG.consensus_encode(w)?;
             len += self.input.consensus_encode(w)?;
-            len += self.output.consensus_encode(w)?;
+
+            len += if self.version == Version::TWO {
+                self.output.iter().try_fold(0usize, |acc, tx| {
+                    let value_len = tx.value.consensus_encode(w)?;
+                    let script_len = tx.script_pubkey.consensus_encode(w)?;
+                    Ok::<usize, io::Error>(acc + value_len + script_len)
+                })?
+            } else {
+                self.output.consensus_encode(w)?
+            };
+
             for input in &self.input {
                 len += input.witness.consensus_encode(w)?;
             }
@@ -1101,7 +1134,14 @@ impl Decodable for Transaction {
                 // BIP144 input witnesses
                 1 => {
                     let mut input = Vec::<TxIn>::consensus_decode_from_finite_reader(r)?;
-                    let output = Vec::<TxOut>::consensus_decode_from_finite_reader(r)?;
+                    let output = if version == Version::TWO {
+                        Vec::<TxOutV2>::consensus_decode_from_finite_reader(r)?
+                            .into_iter()
+                            .map(Into::into)
+                            .collect()
+                    } else {
+                        Decodable::consensus_decode_from_finite_reader(r)?
+                    };
                     for txin in input.iter_mut() {
                         txin.witness = Decodable::consensus_decode_from_finite_reader(r)?;
                     }
@@ -1124,7 +1164,16 @@ impl Decodable for Transaction {
             Ok(Transaction {
                 version,
                 input,
-                output: Decodable::consensus_decode_from_finite_reader(r)?,
+                output: {
+                    if version == Version::TWO {
+                        Vec::<TxOutV2>::consensus_decode_from_finite_reader(r)?
+                            .into_iter()
+                            .map(Into::into)
+                            .collect()
+                    } else {
+                        Decodable::consensus_decode_from_finite_reader(r)?
+                    }
+                },
                 lock_time: Decodable::consensus_decode_from_finite_reader(r)?,
             })
         }
