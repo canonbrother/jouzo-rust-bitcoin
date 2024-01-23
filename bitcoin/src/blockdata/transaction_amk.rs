@@ -22,7 +22,6 @@ use crate::blockdata::locktime::absolute::{self, Height, Time};
 use crate::blockdata::locktime::relative;
 use crate::blockdata::script::{Script, ScriptBuf};
 use crate::blockdata::witness::Witness;
-use crate::common::Maybe;
 use crate::consensus::{encode, Decodable, Encodable};
 use crate::hash_types::{Txid, Wtxid};
 use crate::internal_macros::impl_consensus_encoding;
@@ -505,9 +504,6 @@ pub struct TxOut {
     pub value: Amount,
     /// The script which must be satisfied for the output to be spent.
     pub script_pubkey: ScriptBuf,
-    /// Unused. Legacy token_id
-    #[cfg_attr(feature = "serde", serde(skip_serializing_if = "Option::is_none"))]
-    pub unused_token_id: Option<u8>,
 }
 
 impl TxOut {
@@ -515,7 +511,6 @@ impl TxOut {
     pub const NULL: Self = TxOut {
         value: Amount::from_sat(0xffffffffffffffff),
         script_pubkey: ScriptBuf::new(),
-        unused_token_id: Some(0),
     };
 
     /// The weight of this output.
@@ -555,7 +550,6 @@ impl TxOut {
         TxOut {
             value: Amount::from_sat(dust_amount + 1), // minimal non-dust amount is one higher than dust amount
             script_pubkey,
-            unused_token_id: Some(0),
         }
     }
 }
@@ -1014,38 +1008,7 @@ impl Decodable for Version {
     }
 }
 
-// impl_consensus_encoding!(TxOut, value, script_pubkey, unused_token_id);
-impl Encodable for TxOut {
-    fn consensus_encode<W: io::Write + ?Sized>(&self, w: &mut W) -> Result<usize, io::Error> {
-        let mut len = self.value.consensus_encode(w)?;
-        len += self.script_pubkey.consensus_encode(w)?;
-        if let Some(unused_token_id) = self.unused_token_id {
-            len += unused_token_id.consensus_encode(w)?;
-        };
-        Ok(len)
-    }
-}
-impl Decodable for TxOut {
-    fn consensus_decode<R: io::Read + ?Sized>(r: &mut R) -> Result<Self, encode::Error> {
-        let value: Amount =  Decodable::consensus_decode(r)?;
-        let script_pubkey: ScriptBuf =  Decodable::consensus_decode(r)?;
-        let token_id = if let Maybe(Some(token_id)) = <Maybe<u8>>::consensus_decode(r)? {
-            Some(token_id)
-        } else {
-            None
-        };
-        Ok(TxOut {
-            value,
-            script_pubkey,
-            unused_token_id: token_id,
-        })
-        // Ok(TxOut {
-        //     value: Decodable::consensus_decode(r)?,
-        //     script_pubkey: Decodable::consensus_decode(r)?,
-        //     unused_token_id: Some(Decodable::consensus_decode(r)?),
-        // })
-    }
-}
+impl_consensus_encoding!(TxOut, value, script_pubkey);
 
 impl Encodable for OutPoint {
     fn consensus_encode<W: io::Write + ?Sized>(&self, w: &mut W) -> Result<usize, io::Error> {

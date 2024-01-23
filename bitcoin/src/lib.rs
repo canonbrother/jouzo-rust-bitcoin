@@ -113,6 +113,8 @@ pub mod sign_message;
 pub mod string;
 pub mod taproot;
 
+pub mod common;
+
 pub use bitcoin_io::io;
 
 #[rustfmt::skip]                // Keep public re-exports separate.
@@ -122,6 +124,7 @@ pub use crate::{
     amount::{Amount, Denomination, SignedAmount},
     bip32::XKeyIdentifier,
     blockdata::block::{self, Block},
+    blockdata::block_amk::{self, Block as BlockAMK},
     blockdata::constants,
     blockdata::fee_rate::FeeRate,
     blockdata::locktime::{self, absolute, relative},
@@ -130,6 +133,7 @@ pub use crate::{
     blockdata::script::witness_version::{self, WitnessVersion},
     blockdata::script::{self, Script, ScriptBuf, ScriptHash, WScriptHash},
     blockdata::transaction::{self, OutPoint, Sequence, Transaction, TxIn, TxOut},
+    blockdata::transaction_amk::{self, OutPoint as OutPointAMK, Sequence as SequenceAMK, Transaction as TransactionAMK, TxIn as TxInAMK, TxOut as TxOutAMK},
     blockdata::weight::Weight,
     blockdata::witness::{self, Witness},
     consensus::encode::VarInt,
