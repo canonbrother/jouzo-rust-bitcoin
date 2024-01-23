@@ -1102,7 +1102,7 @@ impl Encodable for Transaction {
             len += SEGWIT_FLAG.consensus_encode(w)?;
             len += self.input.consensus_encode(w)?;
 
-            len += if self.version == Version::TWO {
+            len += if self.version.is_standard() {
                 self.output.iter().try_fold(0usize, |acc, tx| {
                     let value_len = tx.value.consensus_encode(w)?;
                     let script_len = tx.script_pubkey.consensus_encode(w)?;
@@ -1134,7 +1134,7 @@ impl Decodable for Transaction {
                 // BIP144 input witnesses
                 1 => {
                     let mut input = Vec::<TxIn>::consensus_decode_from_finite_reader(r)?;
-                    let output = if version == Version::TWO {
+                    let output = if version.is_standard() {
                         Vec::<TxOutV2>::consensus_decode_from_finite_reader(r)?
                             .into_iter()
                             .map(Into::into)
@@ -1165,7 +1165,7 @@ impl Decodable for Transaction {
                 version,
                 input,
                 output: {
-                    if version == Version::TWO {
+                    if version.is_standard() {
                         Vec::<TxOutV2>::consensus_decode_from_finite_reader(r)?
                             .into_iter()
                             .map(Into::into)
