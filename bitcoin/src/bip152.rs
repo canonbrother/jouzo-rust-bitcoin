@@ -392,7 +392,11 @@ mod test {
                 sequence: Sequence(1),
                 witness: Witness::new(),
             }],
-            output: vec![TxOut { value: Amount::ONE_SAT, script_pubkey: ScriptBuf::new() }],
+            output: vec![TxOut {
+                value: Amount::ONE_SAT,
+                script_pubkey: ScriptBuf::new(),
+                unused_token_id: 0,
+            }],
         }
     }
 
@@ -404,7 +408,10 @@ mod test {
                 merkle_root: TxMerkleNode::hash(&[1]),
                 time: 2,
                 bits: CompactTarget::from_consensus(3),
-                nonce: 4,
+                deprecated_height: 0,
+                minted_blocks: 0,
+                sig: Vec::new(),
+                stake_modifier: [0u8; 32],
             },
             txdata: vec![dummy_tx(&[2]), dummy_tx(&[3]), dummy_tx(&[4])],
         }

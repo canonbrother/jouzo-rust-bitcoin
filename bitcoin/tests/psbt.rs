@@ -183,12 +183,14 @@ fn create_transaction() -> Transaction {
         ],
         output: vec![
             TxOut {
+                unused_token_id: 0,
                 value: Amount::from_str_in(output_0.amount, Denomination::Bitcoin)
                     .expect("failed to parse amount"),
                 script_pubkey: ScriptBuf::from_hex(output_0.script_pubkey)
                     .expect("failed to parse script"),
             },
             TxOut {
+                unused_token_id: 0,
                 value: Amount::from_str_in(output_1.amount, Denomination::Bitcoin)
                     .expect("failed to parse amount"),
                 script_pubkey: ScriptBuf::from_hex(output_1.script_pubkey)

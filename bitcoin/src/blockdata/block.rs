@@ -526,7 +526,6 @@ mod tests {
         assert_eq!(serialize(&real_decode.header.merkle_root), merkle);
         assert_eq!(real_decode.header.time, 1231965655);
         assert_eq!(real_decode.header.bits, CompactTarget::from_consensus(486604799));
-        assert_eq!(real_decode.header.nonce, 2067413810);
         assert_eq!(real_decode.header.work(), work);
         assert_eq!(
             real_decode.header.validate_pow(real_decode.header.target()).unwrap(),
@@ -569,7 +568,6 @@ mod tests {
         assert_eq!(real_decode.header.merkle_root, real_decode.compute_merkle_root().unwrap());
         assert_eq!(real_decode.header.time, 1472004949);
         assert_eq!(real_decode.header.bits, CompactTarget::from_consensus(0x1a06d450));
-        assert_eq!(real_decode.header.nonce, 1879759182);
         assert_eq!(real_decode.header.work(), work);
         assert_eq!(
             real_decode.header.validate_pow(real_decode.header.target()).unwrap(),

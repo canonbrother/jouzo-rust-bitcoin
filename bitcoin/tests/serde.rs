@@ -111,6 +111,7 @@ fn serde_regression_txin() {
 #[test]
 fn serde_regression_txout() {
     let txout = TxOut {
+        unused_token_id: 0,
         value: Amount::from_sat(0xDEADBEEFCAFEBABE),
         script_pubkey: ScriptBuf::from(vec![0u8, 1u8, 2u8]),
     };
@@ -239,6 +240,7 @@ fn serde_regression_psbt() {
             .unwrap()]),
         }],
         output: vec![TxOut {
+            unused_token_id: 0,
             value: Amount::from_sat(190_303_501_938),
             script_pubkey: ScriptBuf::from_hex("a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587")
                 .unwrap(),
@@ -284,6 +286,7 @@ fn serde_regression_psbt() {
         inputs: vec![Input {
             non_witness_utxo: Some(tx),
             witness_utxo: Some(TxOut {
+                unused_token_id: 0,
                 value: Amount::from_sat(190_303_501_938),
                 script_pubkey: ScriptBuf::from_hex("a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587").unwrap(),
             }),

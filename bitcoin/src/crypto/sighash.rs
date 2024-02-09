@@ -1753,7 +1753,11 @@ mod tests {
             .given
             .utxos_spent
             .into_iter()
-            .map(|txo| TxOut { value: txo.value, script_pubkey: txo.script_pubkey })
+            .map(|txo| TxOut {
+                value: txo.value,
+                script_pubkey: txo.script_pubkey,
+                unused_token_id: 0,
+            })
             .collect::<Vec<_>>();
 
         // Test intermediary

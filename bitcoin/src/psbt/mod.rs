@@ -1046,6 +1046,7 @@ mod tests {
                     witness: Witness::default(),
                 }],
                 output: vec![TxOut {
+                    unused_token_id: 0,
                     value: Amount::from_sat(output),
                     script_pubkey: ScriptBuf::from_hex(
                         "a9143545e6e33b832c47050f24d3eeb93c9c03948bc787",
@@ -1060,6 +1061,7 @@ mod tests {
 
             inputs: vec![Input {
                 witness_utxo: Some(TxOut {
+                    unused_token_id: 0,
                     value: Amount::from_sat(input),
                     script_pubkey: ScriptBuf::from_hex(
                         "a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587",
@@ -1207,6 +1209,7 @@ mod tests {
                 }],
                 output: vec![
                     TxOut {
+                        unused_token_id: 0,
                         value: Amount::from_sat(99_999_699),
                         script_pubkey: ScriptBuf::from_hex(
                             "76a914d0c59903c5bac2868760e90fd521a4665aa7652088ac",
@@ -1214,6 +1217,7 @@ mod tests {
                         .unwrap(),
                     },
                     TxOut {
+                        unused_token_id: 0,
                         value: Amount::from_sat(100_000_000),
                         script_pubkey: ScriptBuf::from_hex(
                             "a9143545e6e33b832c47050f24d3eeb93c9c03948bc787",
@@ -1280,6 +1284,7 @@ mod tests {
                 )]),
             }],
             output: vec![TxOut {
+                unused_token_id: 0,
                 value: Amount::from_sat(190_303_501_938),
                 script_pubkey: ScriptBuf::from_hex(
                     "a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587",
@@ -1331,6 +1336,7 @@ mod tests {
                 Input {
                     non_witness_utxo: Some(tx),
                     witness_utxo: Some(TxOut {
+                        unused_token_id: 0,
                         value: Amount::from_sat(190_303_501_938),
                         script_pubkey: ScriptBuf::from_hex("a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587").unwrap(),
                     }),
@@ -1466,10 +1472,12 @@ mod tests {
                     ],
                     output: vec![
                         TxOut {
+                            unused_token_id: 0,
                             value: Amount::from_sat(99_999_699),
                             script_pubkey: ScriptBuf::from_hex("76a914d0c59903c5bac2868760e90fd521a4665aa7652088ac").unwrap(),
                         },
                         TxOut {
+                            unused_token_id: 0,
                             value: Amount::from_sat(100_000_000),
                             script_pubkey: ScriptBuf::from_hex("a9143545e6e33b832c47050f24d3eeb93c9c03948bc787").unwrap(),
                         },
@@ -1513,10 +1521,12 @@ mod tests {
                             ],
                             output: vec![
                                 TxOut {
+                                    unused_token_id: 0,
                                     value: Amount::from_sat(200_000_000),
                                     script_pubkey: ScriptBuf::from_hex("76a91485cff1097fd9e008bb34af709c62197b38978a4888ac").unwrap(),
                                 },
                                 TxOut {
+                                    unused_token_id: 0,
                                     value: Amount::from_sat(190_303_501_938),
                                     script_pubkey: ScriptBuf::from_hex("a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587").unwrap(),
                                 },
@@ -1798,10 +1808,12 @@ mod tests {
                 ],
                 output: vec![
                     TxOut {
+                        unused_token_id: 0,
                         value: Amount::from_sat(99_999_699),
                         script_pubkey: ScriptBuf::from_hex("76a914d0c59903c5bac2868760e90fd521a4665aa7652088ac").unwrap(),
                     },
                     TxOut {
+                        unused_token_id: 0,
                         value: Amount::from_sat(100_000_000),
                         script_pubkey: ScriptBuf::from_hex("a9143545e6e33b832c47050f24d3eeb93c9c03948bc787").unwrap(),
                     },
@@ -1845,10 +1857,12 @@ mod tests {
                         ],
                         output: vec![
                             TxOut {
+                                unused_token_id: 0,
                                 value: Amount::from_sat(200_000_000),
                                 script_pubkey: ScriptBuf::from_hex("76a91485cff1097fd9e008bb34af709c62197b38978a4888ac").unwrap(),
                             },
                             TxOut {
+                                unused_token_id: 0,
                                 value: Amount::from_sat(190_303_501_938),
                                 script_pubkey: ScriptBuf::from_hex("a914339725ba21efd62ac753a9bcd067d6c7a6a39d0587").unwrap(),
                             },
@@ -1966,10 +1980,12 @@ mod tests {
                 ],
                 output: vec![
                     TxOut {
+                        unused_token_id: 0,
                         value: output_0_val,
                         script_pubkey:  ScriptBuf::new()
                     },
                     TxOut {
+                        unused_token_id: 0,
                         value: output_1_val,
                         script_pubkey:  ScriptBuf::new()
                     },
@@ -2005,10 +2021,12 @@ mod tests {
                         ],
                         output: vec![
                             TxOut {
+                                unused_token_id: 0,
                                 value: prev_output_val,
                                 script_pubkey:  ScriptBuf::new()
                             },
                             TxOut {
+                                unused_token_id: 0,
                                 value: Amount::from_sat(190_303_501_938),
                                 script_pubkey:  ScriptBuf::new()
                             },
